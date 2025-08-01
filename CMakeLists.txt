@@ -83,7 +83,7 @@ file(GLOB SHADER_SOURCES "${CMAKE_SOURCE_DIR}/shaders/*.vert" "${CMAKE_SOURCE_DI
 set(SHADER_OUTPUT_DIR "${CMAKE_BINARY_DIR}/shaders")
     file(MAKE_DIRECTORY ${SHADER_OUTPUT_DIR})
 
-    set(SPIRV_SHADErs "")
+    set(SPIRV_SHADERS "")
 
     foreach(SHADER_FILE ${SHADER_SOURCES})
         get_filename_component(SHADER_NAME ${SHADER_FILE} NAME_WE)
@@ -98,7 +98,7 @@ set(SHADER_OUTPUT_DIR "${CMAKE_BINARY_DIR}/shaders")
             VERBATIM
         )
 
-        list(APPEND SPIRV_SHADErs ${SHADER_OUTPUT})
+        list(APPEND SPIRV_SHADERS ${SHADER_OUTPUT})
     endforeach()
 
     add_custom_target(
