@@ -3,6 +3,7 @@
 #include "rsWindow.hpp"
 #include "rsInstance.hpp"
 #include "rsSwapChain.hpp"
+#include "rsPipeline.hpp"
 
 namespace RS{
     class rsApp{
@@ -24,5 +25,7 @@ namespace RS{
 
             rsSwapChain appSwapChain{window};
             VkSwapchainKHR swapChain;
+
+            rsPipeline appPipeline;
     };
 }

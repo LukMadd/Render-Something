@@ -127,7 +127,7 @@ namespace RS{
         vkGetSwapchainImagesKHR(device, m_swapChain, &imageCount, m_swapChainImages.data());
 
         m_swapChainImageFormat = surfaceFormat.format;
-        m_swapChainExtent = extent;
+        swapChainExtent = extent;
     }
 
     VkSwapchainKHR rsSwapChain::getSwapChain(){

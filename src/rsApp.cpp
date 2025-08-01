@@ -15,6 +15,7 @@ namespace RS{
         appSwapChain.createSwapChain(appInstance.device, appInstance.physicalDevice, surface);
         swapChain = appSwapChain.getSwapChain();
         appSwapChain.createImageViews(appInstance.device);
+        appPipeline.createGraphicsPipeline(appInstance.device, appSwapChain.swapChainExtent);
     }
 
     void rsApp::mainLoop(){
@@ -31,6 +32,8 @@ namespace RS{
         appSwapChain.destroyImageViews(appInstance.device);
 
         appSwapChain.destroySwapChain(appInstance.device);
+
+        appPipeline.cleanupPipeline(appInstance.device);
 
         vkDestroyDevice(appInstance.device, nullptr);
 
