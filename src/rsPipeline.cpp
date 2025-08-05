@@ -72,6 +72,7 @@ namespace RS{
         dynamicStateCreationInfo.pDynamicStates = dynamicStates.data();
 
         VkPipelineVertexInputStateCreateInfo vertexInputStateCreateInfo{};
+        vertexInputStateCreateInfo.sType = VK_STRUCTURE_TYPE_PIPELINE_VERTEX_INPUT_STATE_CREATE_INFO;
         vertexInputStateCreateInfo.vertexBindingDescriptionCount = 0;
         vertexInputStateCreateInfo.pVertexBindingDescriptions = nullptr;
         vertexInputStateCreateInfo.vertexAttributeDescriptionCount = 0;
@@ -155,10 +156,70 @@ namespace RS{
         if(pipelineLayoutCreateResult != VK_SUCCESS){
             throw std::runtime_error("Failed to create pipeline layout error code " + std::to_string(pipelineLayoutCreateResult) + "!");
         } 
+
+        VkGraphicsPipelineCreateInfo pipelineInfo{};
+        pipelineInfo.sType = VK_STRUCTURE_TYPE_GRAPHICS_PIPELINE_CREATE_INFO;
+        pipelineInfo.stageCount = 2;
+        pipelineInfo.pStages = shaderStages;
+        pipelineInfo.pVertexInputState = &vertexInputStateCreateInfo;
+        pipelineInfo.pInputAssemblyState = &inputAssemblyStateCreateInfo;
+        pipelineInfo.pViewportState = &viewportStateCreateInfo;
+        pipelineInfo.pRasterizationState = &rasterizer;
+        pipelineInfo.pMultisampleState = &multisampling;
+        pipelineInfo.pDepthStencilState = nullptr;
+        pipelineInfo.pColorBlendState = &colorBlending;
+        pipelineInfo.pDynamicState = &dynamicStateCreationInfo;
+
+        pipelineInfo.layout = m_pipelineLayout;
+        pipelineInfo.renderPass = renderPass;
+        pipelineInfo.subpass = 0;
+
+        pipelineInfo.basePipelineHandle = VK_NULL_HANDLE;
+        pipelineInfo.basePipelineIndex = -1;
+
+        VkResult result = vkCreateGraphicsPipelines(device, VK_NULL_HANDLE, 1, &pipelineInfo,nullptr, &graphicsPipeline);
+        if(result != VK_SUCCESS){
+            throw std::runtime_error("Failed to create graphics pipeline error code " + std::to_string(result) + "!");
+        }
+    }
+
+    void rsPipeline::createRenderPass(VkDevice device, VkFormat swapChainImageFormat){
+        VkAttachmentDescription colorAttachment{};
+        colorAttachment.format = swapChainImageFormat;
+        colorAttachment.samples = VK_SAMPLE_COUNT_1_BIT;
+        colorAttachment.loadOp = VK_ATTACHMENT_LOAD_OP_CLEAR;
+        colorAttachment.storeOp = VK_ATTACHMENT_STORE_OP_STORE;
+        colorAttachment.stencilLoadOp = VK_ATTACHMENT_LOAD_OP_DONT_CARE;
+        colorAttachment.stencilStoreOp = VK_ATTACHMENT_STORE_OP_DONT_CARE;
+        colorAttachment.initialLayout = VK_IMAGE_LAYOUT_UNDEFINED;
+        colorAttachment.finalLayout = VK_IMAGE_LAYOUT_PRESENT_SRC_KHR;
+
+        VkAttachmentReference colorAttachmentRef{};
+        colorAttachmentRef.attachment = 0;
+        colorAttachmentRef.layout = VK_IMAGE_LAYOUT_COLOR_ATTACHMENT_OPTIMAL;
+
+        VkSubpassDescription subpass{};
+        subpass.pipelineBindPoint = VK_PIPELINE_BIND_POINT_GRAPHICS;
+        subpass.colorAttachmentCount = 1;
+        subpass.pColorAttachments = &colorAttachmentRef;
+
+        VkRenderPassCreateInfo renderPassCreateInfo{};
+        renderPassCreateInfo.sType = VK_STRUCTURE_TYPE_RENDER_PASS_CREATE_INFO;
+        renderPassCreateInfo.attachmentCount = 1;
+        renderPassCreateInfo.pAttachments = &colorAttachment;
+        renderPassCreateInfo.subpassCount = 1;
+        renderPassCreateInfo.pSubpasses = &subpass;
+
+        VkResult result = vkCreateRenderPass(device, &renderPassCreateInfo, nullptr,  &renderPass);
+        if(result != VK_SUCCESS){
+            throw std::runtime_error("Failed to create render pass error code: " + std::to_string(result) + "!");
+        }
     }
 
     void rsPipeline::cleanupPipeline(VkDevice device){
+        vkDestroyPipeline(device, graphicsPipeline, nullptr);
         vkDestroyPipelineLayout(device, m_pipelineLayout, nullptr);
+        vkDestroyRenderPass(device, renderPass, nullptr);
 
         vkDestroyShaderModule(device, vertShaderModule, nullptr);
         vkDestroyShaderModule(device, fragShaderModule, nullptr);

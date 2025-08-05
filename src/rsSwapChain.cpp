@@ -126,7 +126,7 @@ namespace RS{
         m_swapChainImages.resize(imageCount);
         vkGetSwapchainImagesKHR(device, m_swapChain, &imageCount, m_swapChainImages.data());
 
-        m_swapChainImageFormat = surfaceFormat.format;
+        swapChainImageFormat = surfaceFormat.format;
         swapChainExtent = extent;
     }
 
@@ -146,7 +146,7 @@ namespace RS{
             imageViewCreateInfo.sType = VK_STRUCTURE_TYPE_IMAGE_VIEW_CREATE_INFO;
             imageViewCreateInfo.image = m_swapChainImages[i];
             imageViewCreateInfo.viewType = VK_IMAGE_VIEW_TYPE_2D;
-            imageViewCreateInfo.format = m_swapChainImageFormat;
+            imageViewCreateInfo.format = swapChainImageFormat;
             imageViewCreateInfo.components.r = VK_COMPONENT_SWIZZLE_IDENTITY;
             imageViewCreateInfo.components.g = VK_COMPONENT_SWIZZLE_IDENTITY;
             imageViewCreateInfo.components.b = VK_COMPONENT_SWIZZLE_IDENTITY;

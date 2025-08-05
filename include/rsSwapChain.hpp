@@ -16,6 +16,8 @@ namespace RS{
         public:
             VkExtent2D swapChainExtent;
 
+            VkFormat swapChainImageFormat;
+
             rsSwapChain(GLFWwindow* window);
 
             VkSurfaceFormatKHR chooseSwapSurfaceFormat(const std::vector<VkSurfaceFormatKHR>& availableFormats);
@@ -38,7 +40,6 @@ namespace RS{
             GLFWwindow* m_window;
             VkSwapchainKHR m_swapChain;
             std::vector<VkImage> m_swapChainImages;
-            VkFormat m_swapChainImageFormat;
 
             std::vector<VkImageView> m_swapChainImageViews;
     };
