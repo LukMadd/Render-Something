@@ -130,12 +130,32 @@ namespace RS{
         swapChainExtent = extent;
     }
 
-    VkSwapchainKHR rsSwapChain::getSwapChain(){
-        return m_swapChain;
+    void rsSwapChain::createFramebuffers(VkDevice device, VkRenderPass renderPass){
+        swapChainFramebuffers.resize(m_swapChainImageViews.size());
+
+        for(size_t i = 0; i < m_swapChainImageViews.size(); i++){
+            VkImageView attachments[] = {
+                m_swapChainImageViews[i]
+            };
+
+            VkFramebufferCreateInfo framebufferInfo{};
+            framebufferInfo.sType = VK_STRUCTURE_TYPE_FRAMEBUFFER_CREATE_INFO;
+            framebufferInfo.renderPass = renderPass;
+            framebufferInfo.attachmentCount = 1;
+            framebufferInfo.pAttachments = attachments;
+            framebufferInfo.width = swapChainExtent.width;
+            framebufferInfo.height = swapChainExtent.height;
+            framebufferInfo.layers = 1;
+
+            VkResult result = vkCreateFramebuffer(device, &framebufferInfo, nullptr, &swapChainFramebuffers[i]);
+            if(result != VK_SUCCESS){
+                throw std::runtime_error("Failed to create framebuffer at index " + std::to_string(i) + " error code: " + std::to_string(result) + "!");
+            }
+        }
     }
 
-    void rsSwapChain::destroySwapChain(VkDevice device){
-        vkDestroySwapchainKHR(device, m_swapChain, nullptr);
+    VkSwapchainKHR rsSwapChain::getSwapChain(){
+        return m_swapChain;
     }
 
     void rsSwapChain::createImageViews(VkDevice device){
@@ -164,9 +184,17 @@ namespace RS{
         }
     }
 
-    void rsSwapChain::destroyImageViews(VkDevice device){
+    void rsSwapChain::cleanupSwapChain(VkDevice device){
+        for (auto framebuffer : swapChainFramebuffers){
+            vkDestroyFramebuffer(device, framebuffer, nullptr);
+        }
+
         for(auto imageView : m_swapChainImageViews){
             vkDestroyImageView(device, imageView, nullptr);
         }
+
+        vkDestroySwapchainKHR(device, m_swapChain, nullptr);
+
+        
     }
 }

@@ -30,9 +30,7 @@ namespace RS{
 
         glfwTerminate();
 
-        appSwapChain.destroyImageViews(appInstance.device);
-
-        appSwapChain.destroySwapChain(appInstance.device);
+        appSwapChain.cleanupSwapChain(appInstance.device);
 
         appPipeline.cleanupPipeline(appInstance.device);
 

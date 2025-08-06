@@ -30,11 +30,11 @@ namespace RS{
 
             void createImageViews(VkDevice device);    
 
+            void createFramebuffers(VkDevice device, VkRenderPass renderPass);
+
             VkSwapchainKHR getSwapChain();
 
-            void destroySwapChain(VkDevice device);
-
-            void destroyImageViews(VkDevice device);
+            void cleanupSwapChain(VkDevice device);
 
         private:
             GLFWwindow* m_window;
@@ -42,5 +42,7 @@ namespace RS{
             std::vector<VkImage> m_swapChainImages;
 
             std::vector<VkImageView> m_swapChainImageViews;
+
+            std::vector<VkFramebuffer> swapChainFramebuffers;
     };
 }
