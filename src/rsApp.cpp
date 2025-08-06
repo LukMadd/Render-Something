@@ -17,6 +17,7 @@ namespace RS{
         appSwapChain.createImageViews(appInstance.device);
         appPipeline.createRenderPass(appInstance.device, appSwapChain.swapChainImageFormat);
         appPipeline.createGraphicsPipeline(appInstance.device, appSwapChain.swapChainExtent);
+        appCommand.createCommandPool(appInstance.device ,appInstance.physicalDevice, surface);
     }
 
     void rsApp::mainLoop(){
@@ -39,5 +40,7 @@ namespace RS{
         vkDestroySurfaceKHR(instance, surface, nullptr);
 
         vkDestroyInstance(instance, nullptr);
+
+        appCommand.cleanupCommandPool(appInstance.device);
     }
 }

@@ -2,8 +2,8 @@
 #include <GLFW/glfw3.h>
 #include "rsWindow.hpp"
 #include "rsInstance.hpp"
-#include "rsSwapChain.hpp"
 #include "rsPipeline.hpp"
+#include "rsCommand.hpp"
 
 namespace RS{
     class rsApp{
@@ -27,5 +27,7 @@ namespace RS{
             VkSwapchainKHR swapChain;
 
             rsPipeline appPipeline;
+
+            rsCommand appCommand;
     };
 }
